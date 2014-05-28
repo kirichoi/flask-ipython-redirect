@@ -68,12 +68,12 @@ def encodestr(output):
     else:
         print "Wrong input"
         strform = encodetype()
-    outstr = instnl(enstr)
 
     fout = open(outputloc, "wb")
     temp = Template("http://localhost:5000/redirect?title=$name&format=$formtype&archive=$code")
-    fstr = temp.substitute(name = fname, formtype = entype, code = outstr)
-    fout.write(fstr)
+    fstr = temp.substitute(name = fname, formtype = entype, code = enstr)
+    outstr = instnl(fstr)
+    fout.write(outstr)
     fin.close()
     fout.close()
     print "Converted \n"
