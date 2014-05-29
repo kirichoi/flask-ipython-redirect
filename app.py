@@ -46,7 +46,7 @@ def openAsSpyder():
     dstloc = os.path.join(dirname, title + '.py')
     sp.call([os.path.join(home, 'pythonw.exe'), os.path.join(home, 'Scripts', 'spyder'), dstloc], creationflags = getattr(sp,"CREATE_NEW_CONSOLE",0))
     return render_template('pickHost.html')
-    
-    
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
