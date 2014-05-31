@@ -23,16 +23,22 @@ def make_redirect_ipython():
 @app.route('/open')
 def openAsNotebook():
     # host = request.args.get('host')
-
+    
     title = request.args.get('title', type=str)
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
     ipythonify.pyprep(archive, dirname, title, encin)
-    notebook = ipythonify.jsonify(os.path.join(dirname, title + '.py'), title)
-    with open(os.path.join(dirname, title + '.ipynb'), "w") as notebook_file:
+    notebook = ipythonify.jsonify(dirname, title)
+    dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
+    with open(dstloc, "w") as notebook_file:
         notebook_file.write(notebook)
-    dstloc = os.path.join(dirname, title + '.ipynb')
-    sp.call('"' + os.path.join(home, "Scripts", "ipython") + '"' + " notebook" + " --matplotlib inline " + '"' +  dstloc + '"', creationflags = getattr(sp,"CREATE_NEW_CONSOLE",0))
+    
+    if 'win32' in sys.platform:
+        sp.call("ipython notebook --matplotlib inline " + '"' + dstloc + '"', creationflags = getattr(sp,"CREATE_NEW_CONSOLE",0))
+    elif 'linux' or 'darwin' in sys.platform:
+        import pwd
+        usrname = pwd.getpwuid(os.getuid())[0]
+        sp.Popen(["gnome-terminal","--working-directory=/home/" + usrname, "-e", "ipython", "notebook", "--matplotlib inline", dstloc])
     #return redirect('http://' + 'localhost:8888' + '/notebooks/' + title + '.ipynb', code=302)
     return render_template('pickHost.html')
     
@@ -43,8 +49,12 @@ def openAsSpyder():
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
     ipythonify.pyprep(archive, dirname, title, encin)
-    dstloc = os.path.join(dirname, title + '.py')
-    sp.call([os.path.join(home, 'pythonw.exe'), os.path.join(home, 'Scripts', 'spyder'), dstloc], creationflags = getattr(sp,"CREATE_NEW_CONSOLE",0))
+    dstloc = os.path.join(os.path.join(dirname, title), title + '.py')
+    if 'win32' in sys.platform:
+        sp.call("spyder " + '"' + dstloc + '"', shell=True)
+    elif 'linux' or 'darwin' in sys.platform:
+        sp.call(["spyder", dstloc], shell=True)
+    #creationflags = getattr(sp,"CREATE_NEW_CONSOLE",0))
     return render_template('pickHost.html')
 
 
