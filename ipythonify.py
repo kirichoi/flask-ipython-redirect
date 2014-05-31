@@ -1,5 +1,14 @@
 # -*- coding: utf-8 -*-
 
+"""
+Ipythonify module v0.1 May 20 2014
+Author: Kiri Choi
+University of Washington
+kirichoi@uw.edu
+
+This module will convert hex string back to its original zip file and uncompress them within the same folder.
+"""
+
 import sys, os, errno, time, json
 import binascii as bi
 import zipfile as zi
@@ -10,20 +19,16 @@ import fileinput as fi
 import base64 as b64
 from string import Template
 
-print """ipythonify module v0.1 May 20 2014
-Author: Kiri Choi
-University of Washington
-kirichoi@uw.edu
+print "Ipythonify v0.1"
 
-This module will convert hex string back to its original zip file and uncompress them within the same folder.\n"""
 
 def pyprep(inputstr, dirpth, fname, encode):    #given a string, directory path, and output filename, it creates a py script and a folder with raw model
     zoutfname = fname + '.zip'
-    zoutputloc = os.path.join(dircheck(dirpth), zoutfname)
+    zoutputloc = os.path.join(dircheck(os.path.join(dirpth,fname)), zoutfname)
     zipdirname = fname + '_raw_model'
-    zipextloc = os.path.join(dircheck(dirpth), zipdirname)
+    zipextloc = os.path.join(dircheck(os.path.join(dirpth,fname)), zipdirname)
 
-    pymodelloc = os.path.join(dircheck(dirpth), fname + '.py')
+    pymodelloc = os.path.join(dircheck(os.path.join(dirpth,fname)), fname + '.py')
     
     decodestr(inputstr, zoutputloc, zipextloc, encode)
     codestitch(pymodelloc, zipextloc, fname)
@@ -109,8 +114,8 @@ def codeanalysis(pymodelloc, extloc):    #included in case of sedml codes not co
                 line = line.replace("roadrunner.RoadRunner()", "roadrunner.RoadRunner(model)")
             print line
 
-def jsonify(pyloc, fname):    #given the location of py script, outputs json string
-    srcfile = open(pyloc, "r+")
+def jsonify(pydirloc, fname):    #given the location of py script, outputs json string
+    srcfile = open(os.path.join(os.path.join(pydirloc,fname), fname + '.py'), "r+")
     srcfile.seek(0)
     srcread = srcfile.readlines(0)
     modelcon = json.dumps(srcread)
