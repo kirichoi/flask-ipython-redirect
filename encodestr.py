@@ -55,7 +55,7 @@ def encodestr(output):
     fin = open(locid, "rb")
     finput = fin.read()
     
-    if strform == 'base64' or strform == 'b':
+    if strform == 'base64' or strform == 'b64' or strform == 'b':
         outputloc = locid.replace('.zip','_b64.txt')
         enstr = b64.urlsafe_b64encode(finput)
         entype = 'base64'
