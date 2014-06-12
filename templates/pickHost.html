@@ -11,8 +11,11 @@
         </br>
         <div class="row">
             <div class="col-md-12" style="text-align:center">
-                <a class="btn btn-primary btn-lg" href="open?host=localhost%3A8888&title={{request.args.get('title')}}&format={{request.args.get('format')}}&archive={{request.args.get('archive')}}">Ipython</a>
-                <p class="small">Open locally with IPython</p>
+                <a class="btn btn-primary btn-lg" href="open?host=localhost%3A8888&title={{request.args.get('title')}}&format={{request.args.get('format')}}&archive={{request.args.get('archive')}}">IPython</a>
+                <span class="col-small" style="text-align:right">
+                    <a class="btn btn-danger btn-small" href="quit?host=localhost%3A8888&title={{request.args.get('title')}}&format={{request.args.get('format')}}&archive={{request.args.get('archive')}}">Quit</a>
+                </span>
+				<p class="small">Open locally with IPython</p>
             </div>
         </div>
 	    <div class="row">
@@ -23,16 +26,10 @@
 		</div>
         <div class="row">
             <div class="col-md-12" style="text-align:center">
-                <a class="btn btn-primary btn-lg" href="">viewer.sysb.io</a>
+                <a class="btn btn-primary btn-lg" href="http://carbon.sysb.io:'{{request.args.get('usrid')}}'/notebooks/'{{request.args.get('title')}}'.ipynb">viewer.sysb.io</a>
                 <p class="small">Try out our cloud service!</p>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-12" style="text-align:center">
-                <a class="btn btn-danger btn-lg" href="quit?host=localhost%3A8888&title={{request.args.get('title')}}&format={{request.args.get('format')}}&archive={{request.args.get('archive')}}">Quit</a>
-				<p class="small">Quit IPython</p>
-            </div>
-        </div>
-	</div>
+   	</div>
 </div>
 </body>

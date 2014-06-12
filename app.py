@@ -28,7 +28,7 @@ def openAsNotebook():
     title = request.args.get('title', type=str)
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
-    ipythonify.pyprep(archive, dirname, title, encin)
+    ipythonify.str2model(archive, dirname, title, encin)
     notebook = ipythonify.jsonify(dirname, title)
     dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
     with open(dstloc, "w") as notebook_file:
@@ -40,11 +40,11 @@ def openAsNotebook():
     elif 'linux' or 'darwin' in sys.platform:
         #import pwd
         #usrname = pwd.getpwuid(os.getuid())[0]
-        ipy = sp.Popen(["ipython", "notebook", "--matplotlib inline", dstloc])
+        ipy = sp.Popen(["ipython", "notebook", "--matplotlib", "inline", dstloc])
         processid = str(ipy.pid)
         #g.ipython = sp.Popen(["gnome-terminal","--working-directory=/home/" + usrname, "-e", "ipython", "notebook", "--matplotlib inline", dstloc])
     #return redirect('http://' + 'localhost:8888' + '/notebooks/' + title + '.ipynb', code=302)
-    print "pid is" + processid
+    print "pid is " + processid
     return render_template('pickHost.html')
     
     
@@ -54,7 +54,7 @@ def q():
     print "pid is " + processid
     if 'win32' in sys.platform:
         try: 
-            os.system("taskkill /f /PID " + processid)
+            os.system("taskkill /f /t /PID " + processid)
         except SyntaxError:
             pass
     elif 'linux' or 'darwin' in sys.platform:
@@ -72,7 +72,7 @@ def openAsSpyder():
     title = request.args.get('title', type=str)
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
-    ipythonify.pyprep(archive, dirname, title, encin)
+    ipythonify.str2model(archive, dirname, title, encin)
     dstloc = os.path.join(os.path.join(dirname, title), title + '.py')
     if 'win32' in sys.platform:
         sp.call("spyder " + '"' + dstloc + '"', shell=True)

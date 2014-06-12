@@ -9,7 +9,7 @@ kirichoi@uw.edu
 This module will convert hex string back to its original zip file and uncompress them within the same folder.
 """
 
-import sys, os, errno, time, json
+import sys, os, errno, time, json, argparse
 import binascii as bi
 import zipfile as zi
 import tellurium as te
@@ -21,8 +21,12 @@ from string import Template
 
 print "Ipythonify v0.1"
 
+#parser = argparse.ArgumentParser(description = 'Define the locations.')
+#parser.add_argument('-i', help = 'Input path of the combine archive')
+#parser.add_argumenmt('-p', help = 'Output path of the model')
 
-def pyprep(inputstr, dirpth, fname, encode):    #given a string, directory path, and output filename, it creates a py script and a folder with raw model
+
+def str2model(inputstr, dirpth, fname, encode):    #given a string, directory path, and output filename, it creates a py script and a folder with raw model
     zoutfname = fname + '.zip'
     zoutputloc = os.path.join(dircheck(os.path.join(dirpth,fname)), zoutfname)
     zipdirname = fname + '_raw_model'
@@ -33,11 +37,26 @@ def pyprep(inputstr, dirpth, fname, encode):    #given a string, directory path,
     decodestr(inputstr, zoutputloc, zipextloc, encode)
     codestitch(pymodelloc, zipextloc, fname)
     codeanalysis(pymodelloc, zipextloc)
+    
+
+def combine2model(combloc):
+    fname = os.path.basename(combloc)
+    fname.replace('.zip','')
+    zipdirname = fname + '_raw_model'
+    pardir = os.path.dirname(combloc)
+    zipextloc = os.path.join(dircheck(os.path.join(dirpth,fname)), zipdirname)
+
+    pymodelloc = os.path.join(dircheck(os.path.join(dirpth,fname)), fname + '.py')
+    
+    zipext(combloc,zipextloc)
+    codestitch(pymodelloc, zipextloc, fname)
+    
 
 def dircheck(loc):    #directory checking and creation
     if not os.path.exists(loc):
         os.makedirs(loc)
     return loc
+    
 
 def decodestr(inputstr, outputloc, extloc, etype):    #takes a string in either hex or base64, creates zip file and extracts it
     str_nnl = inputstr.replace('\n','').replace('\r','')
@@ -54,15 +73,19 @@ def decodestr(inputstr, outputloc, extloc, etype):    #takes a string in either 
     f.close()
     print "Zip file recovered"
     
+    zipext(outputloc, extloc)
+    delseq(outputloc)
+
+    print "Zip file removed \n"
+
+    
+def zipext(outputloc, extloc):
     tarzip = zi.ZipFile(outputloc)
     tarzip.extractall(extloc)
     tarzip.close()
     
     print "Zip file decompressed, \n location = ", extloc
 
-    delseq(outputloc)
-
-    print "Zip file removed \n"
 
 def manifestsearch(zipextloc):    #searching manifest file for appropriate sbml and sedml locations
     manifestloc = os.path.join(zipextloc, 'manifest.xml')
@@ -82,16 +105,19 @@ def manifestsearch(zipextloc):    #searching manifest file for appropriate sbml 
     #sedmlloc = sedmlloc.replace('/','\\')
     return (sbmlloc, sedmlloc)
 
+
 def sbmlconv(zipextloc):    #sbml conversion into antimony str
     sbmlloc, sedmlloc = manifestsearch(zipextloc)
     sbml = te.readFromFile(zipextloc + sbmlloc)
     sbmlantimony = te.sbmlToAntimony(sbml)
     return sbmlantimony
     
+    
 def sedmlconv(zipextloc):    #sedml conversion
     sbmlloc, sedmlloc = manifestsearch(zipextloc)
     sedml = se.sedml_to_python(zipextloc + sedmlloc)
     return sedml
+    
     
 def codestitch(pymodelloc, extloc, filename):    #creates a py script with both sbml and sedml included    
     sbmlstr = sbmlconv(extloc)
@@ -105,6 +131,7 @@ def codestitch(pymodelloc, extloc, filename):    #creates a py script with both 
         filef.write("model = '''\n" + sbmlstr + "'''\n" + sedmlstr)
         filef.close()
         
+        
 def codeanalysis(pymodelloc, extloc):    #included in case of sedml codes not compatible with single model file approach
     sbmlloc, sedmlloc = manifestsearch(extloc)
     for line in fi.input(pymodelloc,inplace = 1):
@@ -113,6 +140,7 @@ def codeanalysis(pymodelloc, extloc):    #included in case of sedml codes not co
             if "roadrunner.RoadRunner()" in line:
                 line = line.replace("roadrunner.RoadRunner()", "roadrunner.RoadRunner(model)")
             print line
+
 
 def jsonify(pydirloc, fname):    #given the location of py script, outputs json string
     srcfile = open(os.path.join(os.path.join(pydirloc,fname), fname + '.py'), "r+")
@@ -147,14 +175,15 @@ def jsonify(pydirloc, fname):    #given the location of py script, outputs json 
     srcfile.close()
     return outputstr
 
+
 def delseq(floc):
     try:
         os.remove(floc)
-    except OSError as e:
-        if e.errno != errno.ENOENT:
+    except OSError as E:
+        if E.errno != errno.ENOENT:
             raise
+
 
 def exitseq():
     raw_input('Press enter to exit.')
     exit(0)
-    
