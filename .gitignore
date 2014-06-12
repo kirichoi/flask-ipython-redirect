@@ -1,2 +1,9 @@
 .ropeproject
 *.pyc
+*.out
+*.atfi
+*.aux
+*.bbl
+*.blg
+*.log
+*.bak
