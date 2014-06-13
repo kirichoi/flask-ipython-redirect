@@ -41,12 +41,11 @@ def str2model(inputstr, dirpth, fname, encode):    #given a string, directory pa
 
 def combine2model(combloc):
     fname = os.path.basename(combloc)
-    fname.replace('.zip','')
-    zipdirname = fname + '_raw_model'
+    zipdirname = fname.replace('.zip','') + '_raw_model'
     pardir = os.path.dirname(combloc)
-    zipextloc = os.path.join(dircheck(os.path.join(dirpth,fname)), zipdirname)
+    zipextloc = os.path.join(dircheck(pardir), zipdirname)
 
-    pymodelloc = os.path.join(dircheck(os.path.join(dirpth,fname)), fname + '.py')
+    pymodelloc = os.path.join(dircheck(pardir), fname + '.py')
     
     zipext(combloc,zipextloc)
     codestitch(pymodelloc, zipextloc, fname)
