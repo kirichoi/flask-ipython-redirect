@@ -28,7 +28,7 @@ def openAsNotebook():
     title = request.args.get('title', type=str)
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
-    ipythonify.str2model(archive, dirname, title, encin)
+    ipythonify.str2py(archive, dirname, title, encin)
     notebook = ipythonify.jsonify(dirname, title)
     dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
     with open(dstloc, "w") as notebook_file:
@@ -72,7 +72,7 @@ def openAsSpyder():
     title = request.args.get('title', type=str)
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
-    ipythonify.str2model(archive, dirname, title, encin)
+    ipythonify.str2py(archive, dirname, title, encin)
     dstloc = os.path.join(os.path.join(dirname, title), title + '.py')
     if 'win32' in sys.platform:
         sp.call("spyder " + '"' + dstloc + '"', shell=True)
@@ -80,6 +80,21 @@ def openAsSpyder():
         sp.call(["spyder", dstloc], shell=True)
     #creationflags = getattr(sp,"CREATE_NEW_CONSOLE",0))
     return render_template('pickHost.html')
+
+
+@app.route('/cloud')
+def openAsCloud():
+    title = request.args.get('title', type=str)
+    host = request.args.get('host', type=str)
+    """encin = request.args.get('format', type=str)
+    archive = request.args.get('archive', type=str)
+    ipythonify.str2py(archive, dirname, title, encin)
+    notebook = ipythonify.jsonify(dirname, title)
+    dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
+    with open(dstloc, "w") as notebook_file:
+        notebook_file.write(notebook)"""
+
+    return redirect('http://' + host + '/notebooks/' + title + '.ipynb', code=302)
 
 
 if __name__ == '__main__':

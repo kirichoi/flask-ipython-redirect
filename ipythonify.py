@@ -26,7 +26,7 @@ print "Ipythonify v0.1"
 #parser.add_argumenmt('-p', help = 'Output path of the model')
 
 
-def str2model(inputstr, dirpth, fname, encode):    #given a string, directory path, and output filename, it creates a py script and a folder with raw model
+def str2py(inputstr, dirpth, fname, encode):    #given a string, directory path, and output filename, it creates a py script and a folder with raw model
     zoutfname = fname + '.zip'
     zoutputloc = os.path.join(dircheck(os.path.join(dirpth,fname)), zoutfname)
     zipdirname = fname + '_raw_model'
@@ -39,7 +39,8 @@ def str2model(inputstr, dirpth, fname, encode):    #given a string, directory pa
     codeanalysis(pymodelloc, zipextloc)
     
 
-def combine2model(combloc):
+def combine2py(combloc):
+    
     fname = os.path.basename(combloc)
     zipdirname = fname.replace('.zip','') + '_raw_model'
     pardir = os.path.dirname(combloc)
