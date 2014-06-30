@@ -10,7 +10,7 @@ Author: Kiri Choi
 University of Washington
 kirichoi@uw.edu
 
-encodestr converts combine archive into either base64 or hex string."""
+Stand alone script that converts combine archive into either base64 or hex string."""
 
 def inq():
     print "The current working directory of this script is",os.getcwd(),"\nIf you want to manually locate the file, enter y"
