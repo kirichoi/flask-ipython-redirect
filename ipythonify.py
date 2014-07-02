@@ -10,6 +10,7 @@ This module will convert hex string back to its original zip file and uncompress
 """
 
 import sys, os, errno, time, json, shutil
+import subprocess as sp
 import binascii as bi
 import zipfile as zi
 import tellurium as te
@@ -36,11 +37,15 @@ def str2py(inputstr, dirpth, fname, encode):
     codeanalysis(pymodelloc, zipextloc)
     
 
-#Converts the combine archive into python script
+#Given the path of the combine archive, converts the combine archive into python script
 def combine2py(combloc):
     fname = os.path.basename(combloc)
     zipdirname = fname.replace('.zip','') + '_raw'
     pardir = os.path.dirname(combloc)
+    if 'win32' in sys.platform:
+        pardir = pardir.replace('/','\\')
+    elif 'linux' or 'darwin' in sys.platform:
+        pardir = pardir.replace('\\','/')
     zipextloc = os.path.join(dircheck(pardir), zipdirname)
 
     pymodelloc = os.path.join(dircheck(pardir), fname.replace('.zip','') + '.py')
@@ -50,6 +55,19 @@ def combine2py(combloc):
     codeanalysis(pymodelloc, zipextloc)
     delseq(zipextloc)
     
+    usrinput = inq()
+
+    if usrinput == 'Y' or usrinput == 'y' or usrinput == 'yes' or usrinput == 'Yes':
+        if 'win32' in sys.platform:
+            sp.call("spyder " + '"' + pymodelloc + '"', shell=True)
+        elif 'linux' or 'darwin' in sys.platform:
+            sp.call(["spyder", pymodelloc], shell=True)
+    elif usrinput == 'N' or usrinput == 'n' or usrinput == 'no' or usrinput == 'No':
+        pass
+    else:
+        print "Wrong input"
+        usrinput = inq()
+
 
 def dircheck(loc):
     if not os.path.exists(loc):
@@ -181,6 +199,11 @@ def jsonify(pydirloc, fname):
     srcfile.close()
     return outputstr
 
+
+def inq():
+    usrinput = raw_input("Open with Spyder? (Y/N) = ")
+    return usrinput
+    
 
 def delseq(floc):
     try:

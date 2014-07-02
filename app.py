@@ -33,21 +33,22 @@ def openAsNotebook():
     dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
     with open(dstloc, "w") as notebook_file:
         notebook_file.write(notebook)
-    
     if 'win32' in sys.platform:
-        ipy = sp.Popen("ipython notebook --matplotlib inline " + '"' + dstloc + '"')
+        ipy = sp.Popen("ipython notebook --no-browser --matplotlib inline --ip=0.0.0.0 --notebook-dir=" + '"' + os.path.join(dirname, title) + '"')
         processid = str(ipy.pid)
     elif 'linux' or 'darwin' in sys.platform:
-        ipy = sp.Popen(["ipython", "notebook", "--matplotlib", "inline", dstloc])
+        ipy = sp.Popen(["ipython", "notebook", "--no-browser", "--matplotlib", "inline", "--ip=0.0.0.0", "--notebook-dir=" + os.path.join(dirname, title)])
         processid = str(ipy.pid)
     #print "pid is " + processid
-    return render_template('pickHost.html')
+    return redirect('http://' + 'localhost:8888' + '/notebooks/' + title + '.ipynb', code=302)
+    #return render_template('pickHost.html')
     
     
 @app.route('/quit')
 def q():
     global processid
     #print "pid is " + processid
+    print "Killing IPython"
     if 'win32' in sys.platform:
         try: 
             os.system("taskkill /f /t /PID " + processid)
@@ -59,7 +60,6 @@ def q():
         except SyntaxError:
             pass
     processid = str()
-    print "Killing IPython"
     return render_template('pickHost.html')
     
     
