@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template
 from flask import g, redirect
 import ipythonify
-import os, sys
+import os, sys, time
 import subprocess as sp
 
 app = Flask(__name__)
@@ -39,6 +39,7 @@ def openAsNotebook():
     elif 'linux' or 'darwin' in sys.platform:
         ipy = sp.Popen(["ipython", "notebook", "--no-browser", "--matplotlib", "inline", "--ip=0.0.0.0", "--notebook-dir=" + os.path.join(dirname, title)])
         processid = str(ipy.pid)
+    time.sleep(0.5)
     #print "pid is " + processid
     return redirect('http://' + 'localhost:8888' + '/notebooks/' + title + '.ipynb', code=302)
     #return render_template('pickHost.html')
