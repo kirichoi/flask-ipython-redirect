@@ -28,21 +28,23 @@ def openAsNotebook():
     title = request.args.get('title', type=str)
     encin = request.args.get('format', type=str)
     archive = request.args.get('archive', type=str)
-    ipythonify.str2py(archive, dirname, title, encin)
-    notebook = ipythonify.jsonify(dirname, title)
-    dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
-    with open(dstloc, "w") as notebook_file:
-        notebook_file.write(notebook)
-    if 'win32' in sys.platform:
-        ipy = sp.Popen("ipython notebook --no-browser --matplotlib inline --ip=0.0.0.0 --notebook-dir=" + '"' + os.path.join(dirname, title) + '"')
-        processid = str(ipy.pid)
-    elif 'linux' or 'darwin' in sys.platform:
-        ipy = sp.Popen(["ipython", "notebook", "--no-browser", "--matplotlib", "inline", "--ip=0.0.0.0", "--notebook-dir=" + os.path.join(dirname, title)])
-        processid = str(ipy.pid)
+    if processid == str():
+        ipythonify.str2py(archive, dirname, title, encin)
+        notebook = ipythonify.jsonify(dirname, title)
+        dstloc = os.path.join(os.path.join(dirname, title), title + '.ipynb')
+        with open(dstloc, "w") as notebook_file:
+            notebook_file.write(notebook)
+        if 'win32' in sys.platform:
+            ipy = sp.Popen("ipython notebook --no-browser --matplotlib inline --ip=0.0.0.0 --notebook-dir=" + '"' + os.path.join(dirname, title) + '"')
+            processid = str(ipy.pid)
+        elif 'linux' or 'darwin' in sys.platform:
+            ipy = sp.Popen(["ipython", "notebook", "--no-browser", "--matplotlib", "inline", "--ip=0.0.0.0", "--notebook-dir=" + os.path.join(dirname, title)])
+            processid = str(ipy.pid)
+    else:
+        pass
     time.sleep(0.5)
     #print "pid is " + processid
     return redirect('http://' + 'localhost:8888' + '/notebooks/' + title + '.ipynb', code=302)
-    #return render_template('pickHost.html')
     
     
 @app.route('/quit')
@@ -72,9 +74,9 @@ def openAsSpyder():
     ipythonify.str2py(archive, dirname, title, encin)
     dstloc = os.path.join(os.path.join(dirname, title), title + '.py')
     if 'win32' in sys.platform:
-        sp.call("spyder " + '"' + dstloc + '"', shell=True)
+        sp.Popen("spyder " + '"' + dstloc + '"', shell=True)
     elif 'linux' or 'darwin' in sys.platform:
-        sp.call(["spyder", dstloc], shell=True)
+        sp.Popen(["spyder", dstloc], shell=True)
     return render_template('pickHost.html')
 
 
