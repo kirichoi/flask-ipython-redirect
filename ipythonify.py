@@ -53,15 +53,17 @@ def combine2py(combloc):
     zipext(combloc,zipextloc)
     codestitch(pymodelloc, zipextloc, fname)
     codeanalysis(pymodelloc, zipextloc)
+    
+    print "Python script created at (", pymodelloc, ")"
     delseq(zipextloc)
     
     usrinput = inq()
 
     if usrinput == 'Y' or usrinput == 'y' or usrinput == 'yes' or usrinput == 'Yes':
         if 'win32' in sys.platform:
-            sp.call("spyder " + '"' + pymodelloc + '"', shell=True)
+            sp.Popen("spyder " + '"' + pymodelloc + '"', shell=True)
         elif 'linux' or 'darwin' in sys.platform:
-            sp.call(["spyder", pymodelloc], shell=True)
+            sp.Popen(["spyder", pymodelloc], shell=True)
     elif usrinput == 'N' or usrinput == 'n' or usrinput == 'no' or usrinput == 'No':
         pass
     else:
@@ -102,7 +104,7 @@ def zipext(outputloc, extloc):
     tarzip.extractall(extloc)
     tarzip.close()
     
-    print "Zip file decompressed, \n location = ", extloc
+    print "Zip file decompressed at (", extloc, ")"
 
 
 #Search manifest for appropriate SBML and SEDML locations
@@ -214,6 +216,7 @@ def delseq(floc):
         except OSError as E2:
             if E1.errno != errno.ENOENT or E2.errno != errno.ENOENT:
                 raise
+    print "Raw files removed."
 
 
 def exitseq():
