@@ -163,7 +163,7 @@ def codeanalysis(pymodelloc, extloc):
         line = line.strip()
         if not '.xml' in line:
             if "roadrunner.RoadRunner()" in line:
-                line = line.replace("roadrunner.RoadRunner()", "roadrunner.RoadRunner(AntimonyTranslation)")
+                line = line.replace("roadrunner.RoadRunner()", "te.loada(AntimonyTranslation)")
             print line
 
 
